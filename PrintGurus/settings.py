@@ -67,6 +67,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://gcop-blog.vercel.app"
 ]  # For dev only!
 
+CORS_ALLOW_CREDENTIALS = True
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
