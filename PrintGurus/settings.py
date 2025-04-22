@@ -62,7 +62,16 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # For dev only!
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React dev server
+    "https://gcop-blog.vercel.app"
+]  # For dev only!
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 ROOT_URLCONF = 'PrintGurus.urls'
 
