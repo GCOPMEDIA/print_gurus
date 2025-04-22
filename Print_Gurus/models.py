@@ -9,7 +9,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 from ckeditor.fields import RichTextField
-
+from cloudinary.models import CloudinaryField
 
 import uuid
 
@@ -128,7 +128,7 @@ class BlogPost(models.Model):
     blog_title = models.CharField(null=False,blank=False,max_length=250)
     blog_subtitle = models.CharField(null=True,blank=True,max_length=450)
     blog_body = RichTextField()
-    blog_media = models.ImageField()
+    blog_media = CloudinaryField('image')
     video_url = models.CharField(blank=True,null=True,max_length=1500)
     created_by = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
     like_count = models.IntegerField(default=0)
@@ -147,8 +147,8 @@ class Events(models.Model):
     event_time = models.CharField(null=True,blank=True,max_length=250)
     event_body = models.CharField(null=True,blank=True,max_length=1500)
     event_date = models.CharField(null=True,blank=True,max_length=250)
-    event_image = models.ImageField()
-    event_video = models.ImageField()
+    event_image = CloudinaryField('image',blank=True)
+    event_video = CloudinaryField(resource_type='video',blank=True,null=True)
     created_by = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
 
     class Mate:
@@ -159,7 +159,7 @@ class Leaders(models.Model):
     leader_id = models.AutoField(primary_key=True)
     leader_name = models.CharField(null=False,blank=False,max_length=400)
     leader_title = models.CharField(null=False,blank=False,max_length=400)
-    leader_image = models.ImageField()
+    leader_image = CloudinaryField('image')
     leader_branch = models.CharField(null=True,blank=True,max_length=250)
 
     class Meta:
@@ -211,8 +211,7 @@ admin.site.register(Events,EventsAdmin)
 
 class AboutPageBackground(models.Model):
     image_id = models.AutoField(primary_key=True)
-    background_image = models.ImageField()
-
+    background_image = CloudinaryField('image')
     class Meta:
         managed = True
         db_table = 'aboutBackground'
