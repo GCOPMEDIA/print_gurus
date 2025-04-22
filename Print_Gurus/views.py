@@ -15,7 +15,7 @@ def all_posts(request):
             'title': i.blog_title,
             'subtitle': i.blog_subtitle,
             'body': i.blog_body,
-            'media': f"/images{i.blog_media.url}",
+            'media': f"{i.blog_media.url}",
             'video_url': i.video_url,
             'created_by': i.created_by.first_name,
             "like_count": i.like_count,
@@ -55,7 +55,7 @@ def about(request):
         leader_data = {
             "leader_title": leader.leader_title,
             "leader_name": leader.leader_name,
-            "leader_image": f"/images{leader.leader_image.url}" if leader.leader_image else '',  # Accessing image URL
+            "leader_image": f"{leader.leader_image.url}" if leader.leader_image else '',  # Accessing image URL
             "leader_branch": leader.leader_branch or '',  # Default to empty string if no branch
         }
 
