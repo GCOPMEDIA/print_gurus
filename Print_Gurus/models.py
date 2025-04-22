@@ -127,7 +127,7 @@ class BlogPost(models.Model):
     blog_id = models.AutoField(primary_key=True,)
     blog_title = models.CharField(null=False,blank=False,max_length=250)
     blog_subtitle = models.CharField(null=True,blank=True,max_length=450)
-    blog_body = models.TextField()
+    blog_body = RichTextField()
     blog_media = models.ImageField()
     video_url = models.CharField(blank=True,null=True,max_length=1500)
     created_by = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
