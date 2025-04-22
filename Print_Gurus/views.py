@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 # Create your views here.
 from .models import *
@@ -104,3 +104,5 @@ from django.middleware.csrf import get_token
 def get_csrf(request):
     return JsonResponse({'csrfToken': get_token(request)})
 
+
+# Django view
