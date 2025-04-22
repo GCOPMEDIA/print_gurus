@@ -21,7 +21,7 @@ def all_posts(request):
             "like_count": i.like_count,
             'url': f"/article/{i.blog_id}"
         })
-    print(data_blogs)
+
     return JsonResponse(data_blogs, safe=False)
 
 
