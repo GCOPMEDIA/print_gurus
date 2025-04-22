@@ -9,8 +9,12 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import os
 
 from pathlib import Path
+import dj_database_url
+from dotenv import load_dotenv
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +29,7 @@ SECRET_KEY = 'django-insecure-4f(cdh+3x8^@#-9yjr@@c)v6c636%2$*(km%0)n(q$0w2&1nmd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["print-gurus.onrender.com",'127.0.0.1:8000']
+ALLOWED_HOSTS = ["print-gurus.onrender.com",'127.0.0.1:8000','127.0.0.1']
 
 
 # Application definition
@@ -40,6 +44,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'Print_Gurus',
+    'ckeditor',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -126,4 +133,20 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
+cloudinary.config(
+  cloud_name = os.getenv('CLOUD_NAME'),
+  api_key = os.getenv('API_KEY'),
+  api_secret = os.getenv('API_SECRET')
+)
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('API_KEY'),
+    'API_SECRET': os.getenv('API_SECRET'),
+}
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = '/media/'
+
