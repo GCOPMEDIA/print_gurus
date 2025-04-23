@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 # Create your views here.
@@ -106,3 +108,24 @@ def get_csrf(request):
 
 
 # Django view
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.models import User
+
+@api_view(['POST'])
+def signup_view(request):
+    data = request.data
+    try:
+        user = AuthUser.objects.create_user(
+            username=data['username'],
+            email=data['email'],
+            password=data['password'],
+            first_name=data['f_name'],
+            last_name=data['l_name'],
+            date_joined=datetime.datetime.now(),
+            is_active = True
+        )
+        return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
