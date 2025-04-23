@@ -14,5 +14,6 @@ path('like-post/<int:post_id>/', like_post),
     path("csrf/",get_csrf),
 path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/signup',signup_view)
 
 ]
