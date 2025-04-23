@@ -117,7 +117,7 @@ from django.contrib.auth.models import User
 def signup_view(request):
     data = request.data
     try:
-        user = AuthUser.objects.create_user(
+        user = AuthUser(
             username=data['username'],
             email=data['email'],
             password=data['password'],
