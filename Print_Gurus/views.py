@@ -88,7 +88,9 @@ def about(request):
 def login(request):
     pass
 
+
 from django.views.decorators.csrf import csrf_exempt
+
 
 @csrf_exempt
 def like_post(request, post_id):
@@ -101,31 +103,75 @@ def like_post(request, post_id):
         except BlogPost.DoesNotExist:
             return JsonResponse({'error': 'Post not found'}, status=404)
 
+
 from django.middleware.csrf import get_token
+
 
 def get_csrf(request):
     return JsonResponse({'csrfToken': get_token(request)})
 
 
-# Django view
+from django.db import IntegrityError
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
+from django.utils.timezone import now
+
 
 @api_view(['POST'])
 def signup_view(request):
     data = request.data
     try:
-        user = AuthUser(
+        user = User.objects.create_user(
+            first_name=data['f_name'],
+            last_name=data['l_name'],
             username=data['username'],
             email=data['email'],
             password=data['password'],
-            first_name=data['f_name'],
-            last_name=data['l_name'],
-            date_joined=datetime.datetime.now(),
-            is_active = True
+            is_staff=False,
+            date_joined=now()  # use timezone-aware datetime
         )
-        return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+    except IntegrityError as e:
+        if "UNIQUE constraint failed: auth_user.username" in str(e):
+            return Response({'error': 'Username already taken'}, status=status.HTTP_400_BAD_REQUEST)
+        elif "UNIQUE constraint failed: auth_user.email" in str(e):
+            return Response({'error': 'Email already in use'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Database error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from .models import PostComments
+from .serializers import CommentSerializer
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = PostComments.objects.select_related('user', 'post', 'parent').all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        post_id = self.request.query_params.get('post_id')
+        if post_id:
+            return self.queryset.filter(post_id=post_id)
+        return self.queryset.none()  # Don't return all comments unless filtering
+
+    @action(detail=False, methods=['get'])
+    def for_post(self, request):
+        post_id = request.query_params.get('post_id')
+        comments = self.get_queryset().filter(post_id=post_id, parent=None).order_by('-timestamp')
+        serializer = self.get_serializer(comments, many=True)
+        return Response(serializer.data)
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(['GET'])
+def check_auth(request):
+    return Response({"user": str(request.user), "auth": str(request.auth)})
+
