@@ -226,12 +226,31 @@ class AboutPageBackground(models.Model):
         db_table = 'aboutBackground'
 
 
+from django.db import models
+from django.contrib.auth.models import User
+
 class PostComments(models.Model):
     comment_id = models.AutoField(primary_key=True)
-    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
-    user = models.ForeignKey(AuthUser, on_delete=models.CASCADE)
+    post = models.ForeignKey('BlogPost', on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = True
         db_table = 'Comments'
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"{self.user.username}: {self.comment[:30]}"
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = CloudinaryField('image', blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+
