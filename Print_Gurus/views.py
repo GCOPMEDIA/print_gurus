@@ -144,29 +144,29 @@ def signup_view(request):
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import PostComments
-from .serializers import CommentSerializer
+# from .models import PostComments
+# from .serializers import CommentSerializer
 
-class CommentViewSet(viewsets.ModelViewSet):
-    queryset = PostComments.objects.select_related('user', 'post', 'parent').all()
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-    def get_queryset(self):
-        post_id = self.request.query_params.get('post_id')
-        if post_id:
-            return self.queryset.filter(post_id=post_id)
-        return self.queryset.none()  # Don't return all comments unless filtering
-
-    @action(detail=False, methods=['get'])
-    def for_post(self, request):
-        post_id = request.query_params.get('post_id')
-        comments = self.get_queryset().filter(post_id=post_id, parent=None).order_by('-timestamp')
-        serializer = self.get_serializer(comments, many=True)
-        return Response(serializer.data)
+# class CommentViewSet(viewsets.ModelViewSet):
+#     queryset = PostComments.objects.select_related('user', 'post', 'parent').all()
+#     serializer_class = CommentSerializer
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+#
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
+#
+#     def get_queryset(self):
+#         post_id = self.request.query_params.get('post_id')
+#         if post_id:
+#             return self.queryset.filter(post_id=post_id)
+#         return self.queryset.none()  # Don't return all comments unless filtering
+#
+#     @action(detail=False, methods=['get'])
+#     def for_post(self, request):
+#         post_id = request.query_params.get('post_id')
+#         comments = self.get_queryset().filter(post_id=post_id, parent=None).order_by('-timestamp')
+#         serializer = self.get_serializer(comments, many=True)
+#         return Response(serializer.data)
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
