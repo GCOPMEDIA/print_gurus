@@ -17,7 +17,7 @@ def all_posts(request):
             'title': i.blog_title,
             'subtitle': i.blog_subtitle,
             'body': i.blog_body,
-            'media': f"{i.blog_media.url}",
+            'media': f"{i.blog_media.url}" if {i.blog_media} else "",
             'video_url': i.video_url,
             'created_by': i.created_by.first_name,
             "like_count": i.like_count,
