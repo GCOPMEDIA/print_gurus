@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 router = DefaultRouter()
-router.register(r'comments', CommentViewSet, basename='comment')
+# router.register(r'comments', CommentViewSet, basename='comment')
 
 
 urlpatterns = [
