@@ -29,7 +29,13 @@ SECRET_KEY = 'django-insecure-4f(cdh+3x8^@#-9yjr@@c)v6c636%2$*(km%0)n(q$0w2&1nmd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["print-gurus.onrender.com",'127.0.0.1:8000','127.0.0.1']
+ALLOWED_HOSTS = [
+    "print-gurus.onrender.com",
+    "127.0.0.1",
+    "localhost",
+]
+CORS_ALLOW_CREDENTIALS = True
+
 
 
 # Application definition
@@ -51,6 +57,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,7 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+
     'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
@@ -67,7 +74,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://gcop-blog.vercel.app"
 ]  # For dev only!
 
-CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_HEADERS = True
 CORS_ALLOW_METHODS = [
