@@ -62,7 +62,7 @@ def about(request):
         }
 
         # Categorize leaders
-        if leader.leader_title == "General Overseer":
+        if leader.leader_title == "Founder":
             first_leader = leader_data
         elif leader.leader_title == "Pastor":
             clergy.append(leader_data)
