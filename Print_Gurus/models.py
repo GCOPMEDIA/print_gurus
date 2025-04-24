@@ -5,15 +5,14 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
-import datetime
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 from ckeditor.fields import RichTextField
-from cloudinary.models import CloudinaryField
 
+from cloudinary.models import CloudinaryField
 import uuid
+
 
 
 class AuthGroup(models.Model):
@@ -124,46 +123,44 @@ class DjangoSession(models.Model):
     class Meta:
         managed = False
         db_table = 'django_session'
-
-
 class BlogPost(models.Model):
-    blog_id = models.AutoField(primary_key=True, )
-    blog_title = models.CharField(null=False, blank=False, max_length=250)
-    blog_subtitle = models.CharField(null=True, blank=True, max_length=450)
+    blog_id = models.AutoField(primary_key=True,)
+    blog_title = models.CharField(null=False,blank=False,max_length=250)
+    blog_subtitle = models.CharField(null=True,blank=True,max_length=450)
     blog_body = RichTextField()
-    blog_media = CloudinaryField('image')
-    video_url = models.CharField(blank=True, null=True, max_length=1500)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    blog_media = CloudinaryField('image',blank=True,null=True)
+    video_url = models.CharField(blank=True,null=True,max_length=1500)
+    created_by = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
     like_count = models.IntegerField(default=0)
+
+
 
     class Meta:
         managed = True
         db_table = 'blog_post'
 
-
 class Events(models.Model):
     event_id = models.AutoField(primary_key=True)
-    event_title = models.CharField(null=False, blank=False, max_length=250)
-    event_subtitle = models.CharField(null=True, blank=True, max_length=300)
-    event_venue = models.CharField(null=True, blank=True, max_length=250)
-    event_time = models.CharField(null=True, blank=True, max_length=250)
-    event_body = models.CharField(null=True, blank=True, max_length=1500)
-    event_date = models.CharField(null=True, blank=True, max_length=250)
-    event_image = CloudinaryField('image', blank=True)
-    event_video = CloudinaryField(resource_type='video', blank=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    event_title = models.CharField(null=False,blank=False,max_length=250)
+    event_subtitle = models.CharField(null=True,blank=True,max_length=300)
+    event_venue = models.CharField(null=True,blank=True,max_length=250)
+    event_time = models.CharField(null=True,blank=True,max_length=250)
+    event_body = models.CharField(null=True,blank=True,max_length=1500)
+    event_date = models.CharField(null=True,blank=True,max_length=250)
+    event_image = CloudinaryField('image',blank=True,null=True)
+    event_video = CloudinaryField(resource_type='video',blank=True,null=True)
+    created_by = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
 
     class Mate:
         managed = True
         db_table = 'events'
 
-
 class Leaders(models.Model):
     leader_id = models.AutoField(primary_key=True)
-    leader_name = models.CharField(null=False, blank=False, max_length=400)
-    leader_title = models.CharField(null=False, blank=False, max_length=400)
-    leader_image = CloudinaryField('image')
-    leader_branch = models.CharField(null=True, blank=True, max_length=250)
+    leader_name = models.CharField(null=False,blank=False,max_length=400)
+    leader_title = models.CharField(null=False,blank=False,max_length=400)
+    leader_image = CloudinaryField('image',blank=False,null=False)
+    leader_branch = models.CharField(null=True,blank=True,max_length=250)
 
     class Meta:
         managed = True
@@ -172,7 +169,7 @@ class Leaders(models.Model):
 
 class Like(models.Model):
     anonymous_user_id = models.CharField(max_length=36)  # Stores UUID as a string
-    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, null=True)
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -198,59 +195,26 @@ class BlogPostAdmin(admin.ModelAdmin):
 
 admin.site.register(BlogPost, BlogPostAdmin)
 
-
 class EventsAdmin(admin.ModelAdmin):
-    list_display = ('event_title', 'created_by')
+    list_display = ('event_title','created_by')
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
         return qs.filter(created_by_id=request.user)
-
     def save_model(self, request, obj, form, change):
         if not obj.created_by:
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
-
-
-admin.site.register(Events, EventsAdmin)
-
+admin.site.register(Events,EventsAdmin)
 
 class AboutPageBackground(models.Model):
     image_id = models.AutoField(primary_key=True)
-    background_image = CloudinaryField('image')
+    background_image = CloudinaryField('image',blank=True,null=True)
 
     class Meta:
         managed = True
         db_table = 'aboutBackground'
-
-
-from django.db import models
-from django.contrib.auth.models import User
-
-class PostComments(models.Model):
-    comment_id = models.AutoField(primary_key=True)
-    post = models.ForeignKey('BlogPost', on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.TextField()
-    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        managed = True
-        db_table = 'Comments'
-        ordering = ['timestamp']
-
-    def __str__(self):
-        return f"{self.user.username}: {self.comment[:30]}"
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = CloudinaryField('image', blank=True, null=True)
-
-    def __str__(self):
-        return self.user.username
-
 
 
