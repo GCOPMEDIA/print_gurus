@@ -82,6 +82,7 @@ def about(request):
         "workers": workers,
     }
 
+
     return JsonResponse(data, safe=False)
 
 
@@ -119,18 +120,32 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.utils.timezone import now
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+
 @api_view(['POST'])
 def signup_view(request):
     data = request.data
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not username or not email or not password:
+        return Response({'error': 'Username, email, and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
         user = User.objects.create_user(
-            first_name=data['f_name'],
-            last_name=data['l_name'],
-            username=data['username'],
-            email=data['email'],
-            password=data['password'],
+            first_name=data.get('f_name', ''),
+            last_name=data.get('l_name', ''),
+            username=username,
+            email=email,
+            password=password,
             is_staff=False,
-            date_joined=now()  # use timezone-aware datetime
+            date_joined=now()
         )
         return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
     except IntegrityError as e:
@@ -139,7 +154,6 @@ def signup_view(request):
         elif "UNIQUE constraint failed: auth_user.email" in str(e):
             return Response({'error': 'Email already in use'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'error': 'Database error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
