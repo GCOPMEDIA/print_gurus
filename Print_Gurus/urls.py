@@ -19,7 +19,6 @@ path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/signup',signup_view),
     path('', include(router.urls)),
-    path('check/',check_auth,name='check')
-
-
+    path('check/',check_auth,name='check'),
+    path('comment/',comment)
 ]
