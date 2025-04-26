@@ -20,5 +20,6 @@ path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/signup',signup_view),
     path('', include(router.urls)),
     path('check/',check_auth,name='check'),
-    path('comment/',comment)
+    path('comment/',comment),
+    path('all-comments/',get_all_comments)
 ]
