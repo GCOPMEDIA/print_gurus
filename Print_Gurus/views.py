@@ -216,3 +216,34 @@ def comment(request):
     c.save()
 
     return Response({'message': 'Comment added successfully!'}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def get_all_comments(request):
+    post = request.query_params.get('post_id')  # change to query_params for GET request
+
+    if not post:
+        return Response({'error': 'Oops No Post To Comment on'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        post_obj = BlogPost.objects.get(blog_id=post)
+    except BlogPost.DoesNotExist:
+        return Response({'error': 'Oops Post Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+    c = Comments.objects.filter(post=post_obj)
+    if c.exists():  # better to use exists() for QuerySet check
+        all_comments = [
+            {
+                'username': i.user.username,
+                'comment': i.comment
+            }
+            for i in c
+        ]
+        return Response({'comments': all_comments})
+    else:
+        return Response({'comments': []})  # if no comments, return empty list
+
+
+
+
+
