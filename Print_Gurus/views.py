@@ -82,7 +82,6 @@ def about(request):
         "workers": workers,
     }
 
-
     return JsonResponse(data, safe=False)
 
 
@@ -119,13 +118,12 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 
-
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+
 
 @api_view(['POST'])
 def signup_view(request):
@@ -155,9 +153,7 @@ def signup_view(request):
             return Response({'error': 'Email already in use'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'error': 'Database error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-from rest_framework import viewsets, permissions
-from rest_framework.response import Response
-from rest_framework.decorators import action
+
 # from .models import PostComments
 # from .serializers import CommentSerializer
 
@@ -185,7 +181,38 @@ from rest_framework.decorators import action
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+
 @api_view(['GET'])
 def check_auth(request):
     return Response({"user": str(request.user), "auth": str(request.auth)})
 
+
+@api_view(['POST'])
+def comment(request):
+    data = request.data
+    username = data.get('username')
+    post_id = data.get('post_id')
+    comment_body = data.get('comment')
+
+    if not username or not post_id or not comment_body:
+        return Response({'error': 'Oops Bad Request, missing fields'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        post_obj = BlogPost.objects.get(blog_id=post_id)
+    except BlogPost.DoesNotExist:
+        return Response({'error': 'Oops Post Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        user = AuthUser.objects.get(username=username)
+    except AuthUser.DoesNotExist:
+        return Response({'error': 'Oops User Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Save the comment
+    c = Comments(
+        post=post_obj,
+        user=user,
+        comment=comment_body
+    )
+    c.save()
+
+    return Response({'message': 'Comment added successfully!'}, status=status.HTTP_201_CREATED)
