@@ -153,7 +153,7 @@ class Events(models.Model):
 
     class Mate:
         managed = True
-        db_table = 'events'
+        db_table = 'blog_events'
 
 
 class Leaders(models.Model):
