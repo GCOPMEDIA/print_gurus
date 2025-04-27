@@ -243,7 +243,7 @@ def get_all_comments(request):
                 'id': reply.reply_id,
                 'username': reply.user.username,
                 'comment': reply.reply,
-                'type':'reply'
+                'type': 'reply'
             }
             for reply in replies
         ]
@@ -253,7 +253,7 @@ def get_all_comments(request):
             'username': comment.user.username,
             'comment': comment.comment,
             'replies': reply_list,
-            'type':'comment'
+            'type': 'comment'
             # attach replies here
         })
 
@@ -286,6 +286,13 @@ def reply(request):
     r.save()
     return Response({'message': 'Reply added successfully!'}, status=status.HTTP_201_CREATED)
 
-# def events(request):
-#
-#
+
+@api_view(['GET'])
+def events(request):
+    event = Events.objects.all()
+    if not event:
+        return Response({"message": []})
+    data = [{'title': i.event_title, 'url': i.event_image.url if not i.event_video else i.event_video.url}
+            for i in event
+            ]
+    return Response({'data': data})
