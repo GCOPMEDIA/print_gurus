@@ -220,30 +220,67 @@ def comment(request):
 
 @api_view(['GET'])
 def get_all_comments(request):
-    post = request.query_params.get('post_id')  # change to query_params for GET request
+    post_id = request.query_params.get('post_id')
 
-    if not post:
+    if not post_id:
         return Response({'error': 'Oops No Post To Comment on'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        post_obj = BlogPost.objects.get(blog_id=post)
+        post_obj = BlogPost.objects.get(blog_id=post_id)
     except BlogPost.DoesNotExist:
         return Response({'error': 'Oops Post Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-    c = Comments.objects.filter(post=post_obj)
-    if c.exists():  # better to use exists() for QuerySet check
-        all_comments = [
+    # Fetch all comments related to the post
+    comments = Comments.objects.filter(post=post_obj)  # only top-level comments
+
+    all_comments = []
+    for comment in comments:
+        # Fetch replies to each comment
+        replies = Reply.objects.filter(comment=comment)
+
+        reply_list = [
             {
-                'username': i.user.username,
-                'comment': i.comment
+                'id': reply.reply_id,
+                'username': reply.user.username,
+                'comment': reply.reply
             }
-            for i in c
+            for reply in replies
         ]
-        return Response({'comments': all_comments})
-    else:
-        return Response({'comments': []})  # if no comments, return empty list
+
+        all_comments.append({
+            'id': comment.comment_id,
+            'username': comment.user.username,
+            'comment': comment.comment,
+            'replies': reply_list  # attach replies here
+        })
+
+    return Response({'comments': all_comments})
 
 
+@api_view(['POST'])
+def reply(request):
+    data = request.data
+    comment_id = data.get('parent')
+    reply_text = data.get('text')
+    user = data.get('username')
+    if not comment_id or not reply_text or not user:
+        return Response({'error': 'Oops Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
+    try:
+        c = Comments.objects.get(comment_id=comment_id)
+
+    except Comments.DoesNotExist:
+        return Response({'error': 'Oops  Comment Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        u = AuthUser.objects.get(username=user)
+
+    except AuthUser.DoesNotExist:
+        return Response({'error': 'Oops User Not Found'}, status=status.HTTP_404_NOT_FOUND)
+    r = Reply(comment=c,
+              user=u,
+              reply=reply_text)
+    r.save()
+    return Response({'message': 'Reply added successfully!'}, status=status.HTTP_201_CREATED)
 
 
