@@ -242,7 +242,8 @@ def get_all_comments(request):
             {
                 'id': reply.reply_id,
                 'username': reply.user.username,
-                'comment': reply.reply
+                'comment': reply.reply,
+                'type':'reply'
             }
             for reply in replies
         ]
@@ -251,7 +252,9 @@ def get_all_comments(request):
             'id': comment.comment_id,
             'username': comment.user.username,
             'comment': comment.comment,
-            'replies': reply_list  # attach replies here
+            'replies': reply_list,
+            'type':'comment'
+            # attach replies here
         })
 
     return Response({'comments': all_comments})
