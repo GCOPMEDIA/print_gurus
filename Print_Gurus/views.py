@@ -286,4 +286,6 @@ def reply(request):
     r.save()
     return Response({'message': 'Reply added successfully!'}, status=status.HTTP_201_CREATED)
 
-
+# def events(request):
+#
+#
