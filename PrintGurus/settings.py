@@ -71,7 +71,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React dev server
-    "https://gcop-blog.vercel.app"
+    "https://gcop-blog.vercel.app",
     'https://www.gcopinternational.com'
 ]  # For dev only!
 
