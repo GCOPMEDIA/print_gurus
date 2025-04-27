@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4f(cdh+3x8^@#-9yjr@@c)v6c636%2$*(km%0)n(q$0w2&1nmd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "print-gurus.onrender.com",
@@ -72,6 +72,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React dev server
     "https://gcop-blog.vercel.app"
+    'https://www.gcopinternational.com'
 ]  # For dev only!
 
 
@@ -116,7 +117,7 @@ WSGI_APPLICATION = 'PrintGurus.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.config(default=os.environ.get('DATABASE_URL'),conn_max_age=1800)
+    "default": dj_database_url.config(default='postgresql://postgres:MmkbENtlNCujbkSxdBNjSouYxTBgwDeV@tramway.proxy.rlwy.net:39684/railway',conn_max_age=1800)
 }
 
 
