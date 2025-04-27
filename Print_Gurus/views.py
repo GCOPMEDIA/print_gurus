@@ -289,10 +289,15 @@ def reply(request):
 
 @api_view(['GET'])
 def events(request):
-    event = Events.objects.all()
-    if not event:
-        return Response({"message": []})
-    data = [{'title': i.event_title, 'url': i.event_image.url if not i.event_video else i.event_video.url}
-            for i in event
-            ]
+    events = Events.objects.all()
+    if not events.exists():
+        return Response({'data': []})
+
+    data = [
+        {
+            'title': i.event_title,
+            'url': i.event_video.url if i.event_video else i.event_image.url
+        }
+        for i in events
+    ]
     return Response({'data': data})
