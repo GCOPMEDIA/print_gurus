@@ -22,5 +22,6 @@ path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('check/',check_auth,name='check'),
     path('comment/',comment),
     path('all-comments/',get_all_comments),
-    path('reply/',reply)
+    path('reply/',reply),
+    path('events/',events)
 ]
