@@ -210,6 +210,10 @@ class Migration(migrations.Migration):
                 ('event_video', cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True)),
                 ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
+            options={
+                'db_table': 'blog_events',
+                'managed': True,
+            },
         ),
         migrations.CreateModel(
             name='Reply',
