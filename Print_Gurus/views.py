@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 def all_posts(request):
     data_blogs = []
-    blogs = BlogPost.objects.all()
+    blogs = BlogPost.objects.all().order_by('created_at')
     for i in blogs:
         data_blogs.append({
             'id': i.blog_id,
