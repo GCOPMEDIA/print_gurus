@@ -9,7 +9,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 from ckeditor.fields import RichTextField
-
+from django.utils.timezone import now
 from cloudinary.models import CloudinaryField
 import uuid
 
@@ -133,6 +133,7 @@ class BlogPost(models.Model):
     video_url = models.CharField(blank=True, null=True, max_length=1500)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     like_count = models.IntegerField(default=0)
+    created_at = models.DateField(default=now)
 
     class Meta:
         managed = True
