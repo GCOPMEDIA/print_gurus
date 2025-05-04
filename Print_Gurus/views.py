@@ -24,7 +24,7 @@ def all_posts(request):
             'url': f"/article/{i.blog_id}"
         })
 
-    return JsonResponse(data_blogs, safe=False)
+    return JsonResponse(data_blogs[::-1], safe=False)
 
 
 # class BlogList(APIView):
