@@ -133,7 +133,7 @@ class BlogPost(models.Model):
     video_url = models.CharField(blank=True, null=True, max_length=1500)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     like_count = models.IntegerField(default=0)
-    created_at = models.DateField(default=now)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = True
