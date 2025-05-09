@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from .models import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import os
 
 
 def all_posts(request):
@@ -301,3 +302,20 @@ def events(request):
         for i in events
     ]
     return Response({'data': data})
+
+
+import requests
+from django.http import JsonResponse
+
+def verify_payment(request, reference):
+    headers = {
+        "Authorization": f"Bearer {os.getenv('PAYSTACK_SECRET_CODE')}"
+    }
+    url = f"https://api.paystack.co/transaction/verify/{reference}"
+    response = requests.get(url, headers=headers)
+    result = response.json()
+
+    if result['data']['status'] == 'success':
+        # mark payment as successful in your DB
+        return JsonResponse({'status': f'success'})
+    return JsonResponse({'status': 'failed'})
