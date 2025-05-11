@@ -30,6 +30,7 @@ SECRET_KEY = 'django-insecure-4f(cdh+3x8^@#-9yjr@@c)v6c636%2$*(km%0)n(q$0w2&1nmd
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "print-gurus-jmfg.onrender.com",
     "print-gurus.onrender.com",
     "127.0.0.1",
     "localhost",
@@ -72,7 +73,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React dev server
     "https://gcop-blog.vercel.app",
-    'https://www.gcopinternational.com'
+    'https://www.gcopinternational.com',
+    'https://print-gurus-jmfg.onrender.com'
 ]  # For dev only!
 
 
